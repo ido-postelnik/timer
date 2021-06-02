@@ -9,7 +9,7 @@ import Timer from './components/Timer';
 function App() {
   return (
     <div className="App">
-      <h1>{INTERVAL_TIME / 1000} Second Timer</h1>
+      <h1 className="app-title">{INTERVAL_TIME / 1000} Second Timer</h1>
       <Timer 
         intervalTime={INTERVAL_TIME}
         radius={RADIUS}

@@ -1,8 +1,20 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import { INTERVAL_TIME } from './utils/consts'
+const puppeteer = require('puppeteer');
+const { toMatchImageSnapshot } = require('jest-image-snapshot');
+expect.extend({ toMatchImageSnapshot });
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+let browser;
+let page;
+
+beforeAll(async () => {
+  browser = await puppeteer.launch();
+  page = await browser.newPage();
+  await page.goto('http://localhost:3000/');
 });
+
+describe('On page load', () => {
+  test('App title loads correctly', async() => {
+    const appTitle = await page.$eval('.app-title', e => e.innerHTML);
+    expect(appTitle).toBe(`${INTERVAL_TIME / 1000} Second Timer`);
+  });
+})
