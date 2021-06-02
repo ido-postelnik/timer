@@ -1,8 +1,8 @@
 import React, { useState, useRef } from "react";
 
-import { INTERVAL_TIME, PROGRESS_SPEED, RESET_TIME, RADIUS, TIMER_STATES } from '../utils/consts';
+import { PROGRESS_SPEED, RESET_TIME, TIMER_STATES } from '../utils/consts';
 
-export default function Timer() {
+export default function Timer({intervalTime = 5000, radius = 80}) {
   //#region States
   const [ringProgress, setRingProgress] = useState(1);
   const [timePassed, setTimePassed] = useState(0); // 
@@ -12,8 +12,7 @@ export default function Timer() {
   const intervalRef = useRef(); // Used as a global variable that can be accessed from within the handler function while keeping its value (Closure style)
 
   //#region Timer functionality
-  const handleTimerTapping = (timeInterval) => {
-
+  const handleTimerTapping = () => {
     return function() {
       switch(timerState) {
         case TIMER_STATES.initial:
@@ -26,13 +25,13 @@ export default function Timer() {
               console.log('timePassed: ', timePassed);
 
               // End interval after fully reaching at "INTERVAL_TIME" ms
-              if(timePassed + PROGRESS_SPEED === INTERVAL_TIME){
+              if(timePassed + PROGRESS_SPEED === intervalTime){
                 clearInterval(intervalRef.current);
                 setTimerState(TIMER_STATES.complete);
               }
               return timePassed + PROGRESS_SPEED;
             });
-            setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / INTERVAL_TIME));
+            setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / intervalTime));
           }, PROGRESS_SPEED);
   
           break;
@@ -52,13 +51,13 @@ export default function Timer() {
               console.log('timePassed: ', timePassed);
 
               // End interval after fully reaching at "INTERVAL_TIME" ms
-              if(timePassed + PROGRESS_SPEED === INTERVAL_TIME){
+              if(timePassed + PROGRESS_SPEED === intervalTime){
                 clearInterval(intervalRef.current);
                 setTimerState(TIMER_STATES.complete);
               }
               return timePassed + PROGRESS_SPEED;
             });
-            setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / INTERVAL_TIME));
+            setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / intervalTime));
           }, PROGRESS_SPEED);
 
           break;
@@ -94,14 +93,14 @@ export default function Timer() {
         className="back-ring"
         cx="100" 
         cy="100" 
-        r={RADIUS} 
+        r={radius} 
         pathLength="1"
       />
       <circle 
         className="progress"
         cx="100" 
         cy="100" 
-        r={RADIUS} 
+        r={radius} 
         pathLength="1"
         style={{
           strokeDashoffset: ringProgress
