@@ -1,0 +1,32 @@
+// Colors
+$back-ring: #cfd8dc;
+$progress-stroke: #263238;
+$mask: white;
+
+// Sizes
+$ring-width: 30;
+
+.App {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  .timer-wrapper {
+    transform: rotate(-90deg);
+
+    .back-ring{
+      stroke: $back-ring;
+      stroke-width: $ring-width;
+    }
+
+    .progress {
+      stroke: $progress-stroke;
+      stroke-width: $ring-width;
+      stroke-dasharray: 1;
+      paint-order: stroke;
+      fill: $mask;
+    }
+  }
+}
