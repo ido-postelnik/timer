@@ -4,27 +4,24 @@ import { PROGRESS_SPEED, RESET_TIME, TIMER_STATES } from '../utils/consts';
 import { parseMsToSec } from '../utils/utils';
 
 export default function Timer({intervalTime = 5000, radius = 80}) {
-  //#region States
+  //#region Initialize states and refs
   const [ringProgress, setRingProgress] = useState(1);
-  const [timePassed, setTimePassed] = useState(0); // 
-  const [timerState, setTimerState] = useState(TIMER_STATES.initial);
-  //#endregion
-
+  const [timePassed, setTimePassed] = useState(0); 
+  const [timerState, setTimerState] = useState(TIMER_STATES.stopped);
   const intervalRef = useRef(); // Used as a global variable that can be accessed from within the handler function while keeping its value (Closure style)
+  //#endregion
 
   //#region Timer functionality
   const handleTimerTapping = () => {
     switch(timerState) {
-      case TIMER_STATES.initial:
+      case TIMER_STATES.stopped:
         // Update timer state
         setTimerState(TIMER_STATES.running);
 
         // Start interval
         intervalRef.current = setInterval(() => {
           setTimePassed(timePassed => {
-            console.log('timePassed: ', timePassed);
-
-            // End interval after fully reaching at "INTERVAL_TIME" ms
+            // End interval after fully reached "INTERVAL_TIME" ms
             if(timePassed + PROGRESS_SPEED === intervalTime){
               clearInterval(intervalRef.current);
               setTimerState(TIMER_STATES.complete);
@@ -37,32 +34,14 @@ export default function Timer({intervalTime = 5000, radius = 80}) {
         break;
       case TIMER_STATES.running:
         // Update timer state
-        setTimerState(TIMER_STATES.paused);
+        setTimerState(TIMER_STATES.stopped);
 
         // Stop running interval (but keep the its states)
         clearInterval(intervalRef.current);
         break;
-      case TIMER_STATES.paused:
-        // Update timer state
-        setTimerState(TIMER_STATES.running);
-
-        intervalRef.current = setInterval(() => {
-          setTimePassed(timePassed => {
-            console.log('timePassed: ', timePassed);
-
-            // End interval after fully reaching at "INTERVAL_TIME" ms
-            if(timePassed + PROGRESS_SPEED === intervalTime){
-              clearInterval(intervalRef.current);
-              setTimerState(TIMER_STATES.complete);
-            }
-            return timePassed + PROGRESS_SPEED;
-          });
-          setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / intervalTime));
-        }, PROGRESS_SPEED);
-
-        break;
       case TIMER_STATES.complete:
-        setTimerState(TIMER_STATES.blockTaps); // Block timer from tapping while reseting it
+        setTimerState(TIMER_STATES.blockTaps); // Block timer from tapping while reseting
+
         let timePassed = 0;
         let resetInterval = setInterval(() => {
           timePassed += PROGRESS_SPEED;
@@ -70,12 +49,13 @@ export default function Timer({intervalTime = 5000, radius = 80}) {
             clearInterval(resetInterval);
 
             // Init timer states
-            setTimerState(TIMER_STATES.initial);
+            setTimerState(TIMER_STATES.stopped);
             setTimePassed(0)
           }
 
           setRingProgress(ringProgress => ringProgress + (PROGRESS_SPEED / RESET_TIME));
         }, PROGRESS_SPEED);
+
         break;
       case TIMER_STATES.blockTaps:
         break;
