@@ -1,10 +1,4 @@
-// Colors
-$back-ring: #cfd8dc;
-$progress-stroke: #263238;
-$mask: white;
-
-// Sizes
-$ring-width: 30;
+@import './styles';
 
 .App {
   text-align: center;
@@ -13,20 +7,26 @@ $ring-width: 30;
   justify-content: center;
   align-items: center;
 
-  .timer-wrapper {
-    transform: rotate(-90deg);
-
-    .back-ring{
-      stroke: $back-ring;
-      stroke-width: $ring-width;
+  .timer {
+    .ring{
+      transform: rotate(-90deg);
+    
+      &__back{
+        stroke: $back-ring;
+        stroke-width: $ring-width;
+      }
+  
+      &__progress {
+        stroke: $progress-stroke;
+        stroke-width: $ring-width;
+        stroke-dasharray: 1;
+        paint-order: stroke;
+        fill: $mask;
+      }
     }
 
-    .progress {
-      stroke: $progress-stroke;
-      stroke-width: $ring-width;
-      stroke-dasharray: 1;
-      paint-order: stroke;
-      fill: $mask;
+    .counter{
+      color: $timer-counter;
     }
   }
 }
