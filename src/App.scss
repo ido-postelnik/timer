@@ -6,10 +6,12 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  margin-top: 1rem;
 
   .timer {
     .ring{
       transform: rotate(-90deg);
+      cursor: pointer;
     
       &__back{
         stroke: $back-ring;

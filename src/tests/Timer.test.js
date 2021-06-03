@@ -134,7 +134,7 @@ describe('On reset timer', () => {
     page.click('.ring');
     await page.waitForTimeout(INTERVAL_TIME + 1000);
     page.click('.ring');
-    await page.waitForTimeout(800); // waiting to timer to init (300 ms + margin error)
+    await page.waitForTimeout(800); // waiting for timer to init (300 ms + margin error)
   }, INTERVAL_TIME * 2);  // Enable long-running test
 
   test('Counter is initialized', async() => {
