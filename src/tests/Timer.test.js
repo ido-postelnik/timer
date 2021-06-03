@@ -7,14 +7,12 @@ expect.extend({
     const pass = received >= floor && received <= ceiling;
     if (pass) {
       return {
-        message: () =>
-          `expected ${received} not to be within range ${floor} - ${ceiling}`,
+        message: () => `expected ${received} not to be within range ${floor} - ${ceiling}`,
         pass: true,
       };
     } else {
       return {
-        message: () =>
-          `expected ${received} to be within range ${floor} - ${ceiling}`,
+        message: () => `expected ${received} to be within range ${floor} - ${ceiling}`,
         pass: false,
       };
     }
@@ -60,7 +58,7 @@ describe('On timer completed', () => {
   beforeEach(async () => {
     page.click('.ring');
     await page.waitForTimeout(INTERVAL_TIME);
-  }, INTERVAL_TIME + 1000);  // Enable long-running test (a bit more than INTERVAL_TIME)
+  }, INTERVAL_TIME * 2);  // Enable long-running test
 
   test(`Counter is set to ${completedTime}`, async() => {
     const counter = await page.$eval('.counter', e => e.innerHTML);
@@ -88,7 +86,6 @@ describe('On timer paused after 2 sec', () => {
   test(`Counter is set to 2`, async() => {
     const counter = await page.$eval('.counter', e => e.innerHTML);
     const counterParsed = parseFloat(counter);
-    console.log('counterParsed: ', counterParsed);
     expect(counterParsed).toBeWithinRange(1.9, 2.1); // Margin error
   });
 
@@ -112,12 +109,12 @@ describe('On timer paused after 2 sec, then continue for 1.5 sec, then paused ag
     page.click('.ring'); // start again
     await page.waitForTimeout(1500); // run for additional 1.5 sec
     page.click('.ring'); // pause timer
-  });
+    await page.waitForTimeout(100);
+  }, INTERVAL_TIME * 2); // Enable long-running test
 
   test(`Counter is set to 3.5`, async() => {
     const counter = await page.$eval('.counter', e => e.innerHTML);
     const counterParsed = parseFloat(counter);
-    console.log('counterParsed: ', counterParsed);
     expect(counterParsed).toBeWithinRange(3.4, 3.6); // Margin error
   });
 
@@ -128,6 +125,28 @@ describe('On timer paused after 2 sec, then continue for 1.5 sec, then paused ag
       customSnapshotIdentifier: 'timer-is-three-and-half-sec',
       failureThreshold: 0.1, // Margin error
       failureThresholdType: 'percent'
+    });
+  });
+});
+
+describe('On reset timer', () => {
+  beforeEach(async () => {
+    page.click('.ring');
+    await page.waitForTimeout(INTERVAL_TIME + 1000);
+    page.click('.ring');
+    await page.waitForTimeout(800); // waiting to timer to init (300 ms + margin error)
+  }, INTERVAL_TIME * 2);  // Enable long-running test
+
+  test('Counter is initialized', async() => {
+    const counter = await page.$eval('.counter', e => e.innerHTML);
+    expect(counter).toBe('0.00');
+  });
+
+  test('Timer is initialized', async() => {
+    const image = await page.screenshot();
+    expect(image).toMatchImageSnapshot({
+      customSnapshotsDir: './src/tests/__image_snapshots__', 
+      customSnapshotIdentifier: 'timer-is-initialized-after-completed'
     });
   });
 });
