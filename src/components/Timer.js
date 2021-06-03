@@ -8,36 +8,34 @@ export default function Timer({intervalTime = 5000, radius = 80}) {
   const [ringProgress, setRingProgress] = useState(1);
   const [timePassed, setTimePassed] = useState(0); 
   const [timerState, setTimerState] = useState(TIMER_STATES.stopped);
-  const intervalRef = useRef(); // Used as a global variable that can be accessed from within the handler function while keeping its value (Closure style)
+  const intervalRef = useRef(); // Used like a global variable that can be accessed from within the handler function while keeping its value (Closure style)
   //#endregion
 
   //#region Timer functionality
   const handleTimerTapping = () => {
     switch(timerState) {
       case TIMER_STATES.stopped:
-        // Update timer state
-        setTimerState(TIMER_STATES.running);
+        setTimerState(TIMER_STATES.running); // Update timer state
 
         // Start interval
         intervalRef.current = setInterval(() => {
           setTimePassed(timePassed => {
-            // End interval after fully reached "INTERVAL_TIME" ms
-            if(timePassed + PROGRESS_SPEED === intervalTime){
+            if(timePassed + PROGRESS_SPEED === intervalTime){ // End interval after fully reached "INTERVAL_TIME" ms
               clearInterval(intervalRef.current);
               setTimerState(TIMER_STATES.complete);
             }
+
             return timePassed + PROGRESS_SPEED;
           });
+
           setRingProgress(ringProgress => ringProgress - (PROGRESS_SPEED / intervalTime));
         }, PROGRESS_SPEED);
 
         break;
       case TIMER_STATES.running:
-        // Update timer state
-        setTimerState(TIMER_STATES.stopped);
+        setTimerState(TIMER_STATES.stopped); // Update timer state
+        clearInterval(intervalRef.current); // Stop interval (but keep the timer states)
 
-        // Stop running interval (but keep the its states)
-        clearInterval(intervalRef.current);
         break;
       case TIMER_STATES.complete:
         setTimerState(TIMER_STATES.blockTaps); // Block timer from tapping while reseting
